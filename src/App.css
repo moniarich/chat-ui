@@ -24,74 +24,73 @@
   color: white;
 }
 
-
 .container-main {
   display: flex;
   height: 100%;
   width: 100%;
-  
 }
 
 .row-1 {
-width: 100%;
-display: flex;
-height: 100%;
-
+  width: 100%;
+  display: flex;
+  height: 100%;
 }
 
-.c-friends{
-  width: 30%;
+.c-friends {
   height: 100%;
   color: white;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 20px;
+  position: fixed;
+  overflow-y: scroll;
 }
 
-.c-message{
+.c-message {
   width: inherit;
   height: 100%;
   color: white;
   font-size: 20px;
-  font-family:Georgia, 'Times New Roman', Times, serif;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  padding-left: 25%;
 }
 
-.message-container{
+.message-container {
   display: flex;
-  height: 100%; 
+  height: 100%;
   max-width: 100%;
   align-items: stretch;
   flex-direction: column;
 }
 
-.r-message-display{
+.r-message-display {
   height: 100%;
-   width: 100%
+  width: 100%;
 }
 
-.r-message-type{
+.r-message-type {
   display: flex;
   margin-top: -55;
   width: 100%;
 }
 
-.c-form{
-width: 100%;
+.c-form {
+  width: 100%;
 }
 
-#text, form {
+#text,
+form {
   width: 100%;
   background-color: #282c34;
   color: white;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: "Times New Roman", Times, serif;
   font-size: 16px;
 }
 
-.c-button{
- 
+.c-button {
 }
 
 .button {
-  background-color: #008CBA;
+  background-color: #008cba;
   border: none;
   color: white;
   padding: 15px 32px;
@@ -103,7 +102,6 @@ width: 100%;
   cursor: pointer;
   border-radius: 3px;
   transition-duration: 0.4s;
-
 }
 
 .button:hover {
