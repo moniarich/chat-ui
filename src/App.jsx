@@ -1,7 +1,21 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 
-const client = new WebSocket("ws://127.0.0.1:8080");
+const useWebSocket = (url, onMessage) => {
+  const [client, setClient] = useState(null);
+
+  useEffect(() => {
+    console.log("new websocket");
+    const socket = new WebSocket(url);
+    socket.onmessage = onMessage;
+    setClient(socket);
+  }, [url]);
+
+  return {
+    sendMessage: (...args) => client.send(...args),
+    state: client ? client.readyState : 0,
+  };
+};
 
 function App() {
   const [message, setMessage] = useState("");
@@ -12,19 +26,23 @@ function App() {
   const [nameApprove, setNameApprove] = useState(false);
   const [itisme, setItisme] = useState(true);
 
-  client.onmessage = function (event) {
-    const msg = JSON.parse(event.data);
-    console.log(event);
-    if (msg.type === "msg") {
-      setMessages([...messages, msg.value]);
+  const { sendMessage, state } = useWebSocket(
+    "ws://127.0.0.1:8080",
+    function (event) {
+      const msg = JSON.parse(event.data);
+      console.log(event);
+      if (msg.type === "msg") {
+        console.log("a", messages);
+        setMessages([...messages, msg.value]);
+      }
+      if (msg.type === "friends") {
+        setFriends(msg.value);
+      }
+      if (msg.type === "setName") {
+        setNameApprove(true);
+      }
     }
-    if (msg.type === "friends") {
-      setFriends(msg.value);
-    }
-    if (msg.type === "setName") {
-      setNameApprove(true);
-    }
-  };
+  );
 
   return (
     <>
@@ -78,7 +96,7 @@ function App() {
                           }
 
                           console.log("sending");
-                          client.send(
+                          sendMessage(
                             JSON.stringify({
                               value: message,
                               type: "msg",
@@ -110,7 +128,7 @@ function App() {
                 type="submit"
                 value="Submit"
                 onClick={() => {
-                  client.send(
+                  sendMessage(
                     JSON.stringify({
                       value: name,
                       type: "setName",
