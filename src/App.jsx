@@ -1,21 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./App.css";
-
-const useWebSocket = (url, onMessage) => {
-  const [client, setClient] = useState(null);
-
-  useEffect(() => {
-    console.log("new websocket");
-    const socket = new WebSocket(url);
-    socket.onmessage = onMessage;
-    setClient(socket);
-  }, [url]);
-
-  return {
-    sendMessage: (...args) => client.send(...args),
-    state: client ? client.readyState : 0,
-  };
-};
 
 function App() {
   const [message, setMessage] = useState("");
@@ -24,26 +8,38 @@ function App() {
   const [recipientId, setRecipientId] = useState("");
   const [name, setName] = useState("");
   const [nameApprove, setNameApprove] = useState(false);
-  const [itisme, setItisme] = useState(true);
 
-  const { sendMessage, state } = useWebSocket(
-    "ws://127.0.0.1:8080",
-    function (event) {
+  const webSocket = useRef(null);
+  useEffect(() => {
+    webSocket.current = new WebSocket("ws://127.0.0.1:8080");
+    webSocket.current.onmessage = function (event) {
       const msg = JSON.parse(event.data);
-      console.log(event);
+      console.log(",,,;;;,", event);
       if (msg.type === "msg") {
-        console.log("a", messages);
-        setMessages([...messages, msg.value]);
+        setMessages((messages) => [...messages, msg.value]);
       }
       if (msg.type === "friends") {
         setFriends(msg.value);
       }
       if (msg.type === "setName") {
         setNameApprove(true);
+        setName(msg.value)
       }
-    }
-  );
+    };
+    return () => webSocket.current.close();
+  }, []);
 
+  const getFriendNameColor = (f) => {
+    if (f.id === recipientId) {
+      return "pink";
+    }
+
+    if (f.name === name) {
+      return "gray";
+    }
+
+    return "white";
+  };
   return (
     <>
       <div className="container-main">
@@ -53,10 +49,7 @@ function App() {
               <div className="c-friends">
                 {friends.map((f, i) => (
                   <p
-                    style={{
-                      ...(f.id === recipientId ? { color: "pink" } : {}),
-                      cursor: "pointer",
-                    }}
+                    style={{ color: getFriendNameColor(f), cursor: "pointer" }}
                     onClick={() => {
                       setRecipientId(f.id);
                     }}
@@ -96,7 +89,7 @@ function App() {
                           }
 
                           console.log("sending");
-                          sendMessage(
+                          webSocket.current.send(
                             JSON.stringify({
                               value: message,
                               type: "msg",
@@ -128,7 +121,7 @@ function App() {
                 type="submit"
                 value="Submit"
                 onClick={() => {
-                  sendMessage(
+                  webSocket.current.send(
                     JSON.stringify({
                       value: name,
                       type: "setName",
