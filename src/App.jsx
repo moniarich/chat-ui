@@ -16,7 +16,10 @@ function App() {
       const msg = JSON.parse(event.data);
       console.log(",,,;;;,", event);
       if (msg.type === "msg") {
-        setMessages((messages) => [...messages, msg.value]);
+        setMessages((messages) => [
+          ...messages,
+          { value: msg.value, isMe: false },
+        ]);
       }
       if (msg.type === "friends") {
         setFriends(msg.value);
@@ -28,7 +31,7 @@ function App() {
     };
     return () => webSocket.current.close();
   }, []);
-console.log('name',name)
+  console.log("name", name);
   const getFriendNameColor = (f) => {
     if (f.id === recipientId) {
       return "#00ABE1";
@@ -40,7 +43,7 @@ console.log('name',name)
 
     return "white";
   };
-  
+
   return (
     <>
       <div className="flex">
@@ -63,16 +66,17 @@ console.log('name',name)
               </div>
               <div className="flex-grow relative h-screen bg-gray-900 flex-col-reverse text-gray-300 ">
                 <div className="m-2">
-                  <div className="max-w-full max-h-full text-2xl px-10">
+                  <div className="text-2xl mx-10">
                     {messages.map((m, i) => (
-                      <div className="flex justify-end">
-                      <p
-                        className="box-border w-1/4 bg-blue-500 m-2 p-2 rounded-2xl flex items-end justify-end text-right text-gray-900"
-                     
+                      <div
                         key={i}
+                        className={
+                          m.isMy ? "flex justify-end" : "flex justify-start text-gray-100"
+                        }
                       >
-                        {m}
-                      </p>
+                        <p className="box-border min-w-min   bg-blue-500 m-2 px-4 py-2 rounded-2xl flex items-end justify-end text-right ">
+                          {m.value}
+                        </p>
                       </div>
                     ))}
                   </div>
@@ -107,7 +111,7 @@ console.log('name',name)
                               to: recipientId,
                             })
                           );
-                          setMessages([...messages, message]);
+                          setMessages([...messages, { value: message, isMy: true }]);
                           setMessage("");
                         }}
                       >
