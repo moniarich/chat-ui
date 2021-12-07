@@ -71,7 +71,9 @@ function App() {
                       <div
                         key={i}
                         className={
-                          m.isMy ? "flex justify-end" : "flex justify-start text-gray-100"
+                          m.isMy
+                            ? "flex justify-end"
+                            : "flex justify-start text-gray-100"
                         }
                       >
                         <p className="box-border min-w-min   bg-blue-500 m-2 px-4 py-2 rounded-2xl flex items-end justify-end text-right ">
@@ -111,7 +113,10 @@ function App() {
                               to: recipientId,
                             })
                           );
-                          setMessages([...messages, { value: message, isMy: true }]);
+                          setMessages([
+                            ...messages,
+                            { value: message, isMy: true },
+                          ]);
                           setMessage("");
                         }}
                       >
@@ -136,25 +141,28 @@ function App() {
             <div className="flex w-screen h-screen bg-cover bg-log-bg">
               <div className="box-border shadow-2xl border-4 border-light-blue-500  h-54 w-84 p-4  bg-gray-900 text-blue-500 text-center text-3xl m-auto">
                 <h1 className="tracking-widest pb-4">Nickname</h1>
-                <input
-                  className="text-gray-900 rounded-sm"
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-                <input
-                  className="text-3xl text-gray-100 bg-blue-500 w-1/4 tracking-widest m-2 mt-6 rounded-md"
-                  type="submit"
-                  value="Submit"
-                  onClick={() => {
-                    webSocket.current.send(
-                      JSON.stringify({
-                        value: name,
-                        type: "setName",
-                      })
-                    );
-                  }}
-                />
+                <form>
+                  <input
+                    className="text-gray-900 rounded-sm"
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                  <input
+                    className="text-3xl text-gray-100 bg-blue-500 w-1/4 tracking-widest m-2 mt-6 rounded-md"
+                    type="submit"
+                    value="Submit"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      webSocket.current.send(
+                        JSON.stringify({
+                          value: name,
+                          type: "setName",
+                        })
+                      );
+                    }}
+                  />
+                </form>
               </div>
             </div>
           </>
